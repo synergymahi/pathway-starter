@@ -1,0 +1,21 @@
+steps:
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build',
+         '-t',
+         'gcr.io/$PROJECT_ID/pathway-starter:latest',
+         '.']
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/pathway-starter:latest']
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['run', 'deploy', 'pathway-starter', '--image', 'gcr.io/$PROJECT_ID/pathway-starter:latest', '--region', '$LOCATION']
+# substitutions:
+#     _MONGODB_URI: "THEMONGODBURI" # default value
+images: [
+  'gcr.io/$PROJECT_ID/pathway-starter:latest'
+]
+options:
+  logging: CLOUD_LOGGING_ONLY
